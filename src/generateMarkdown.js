@@ -1,22 +1,27 @@
 const createTeam = function(employeeArray) {
-  let cardsArray = [];
+  const cardsArray = [];
   for (let i = 0; i < employeeArray.length; i++) {
+    let specificRoleItem;
+    if (employeeArray[i].getRole() === 'Manager') {
+      specificRoleItem = `${ employeeArray[i].getOfficeNumber()}`;
+    } else if (employeeArray[i].getRole() === 'Engineer') {
+      specificRoleItem = `${ employeeArray[i].getGithub()}`;
+    } else {
+      specificRoleItem = `${ employeeArray[i].getSchool()}`;
+    }
+
     let card = `
     <div class='card'>
       <h3>${employeeArray[i].name}</h3>
       <h3>${ employeeArray[i].id }</h3>
       <h3>${ employeeArray[i].email }</h3>
       <h3>${ employeeArray[i].getRole() }</h3>
-      `
-      if (employeeArray[i].getRole() === 'Manager') {
-        `<h3>${ employeeArray[i].getOfficeNumber()}</h3>`
-      } else if (employeeArray[i].getRole() === 'Engineer') {
-        `<h3>${ employeeArray[i].getGithub()}</h3>`
-      } else {
-        `<h3>${ employeeArray[i].getSchool()}</h3>`
-      }
-      cardsArray.push(card);
+      <h3>${ specificRoleItem }</h3>
+    </div>`;
+      
+    cardsArray.push(card);
   }
+  cardsArray.join('');
   return cardsArray;
 }
 

@@ -6,10 +6,6 @@ const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 const generateMarkdown = require('./src/generateMarkdown');
 
-const employeeArray = [];
-
-
-
 // function to write README file
 const writeToFile = data => {
   fs.writeFile('./dist/index.html', data, err => {
@@ -22,7 +18,11 @@ const writeToFile = data => {
     }
   })
 }
-function addEmployee() {
+function addEmployee(employeeArray) {
+  if (!employeeArray) {
+    employeeArray = [];
+  }
+ 
   return inquirer.prompt([
     {
       type: 'input',
@@ -130,13 +130,9 @@ function addEmployee() {
       message: 'Would you like to add another employee?',
       default: false
     }
-  ]);
-}
-
-function appStart() {
-  addEmployee()
-  .then(employee => {
-    let { name, employeeId, email, role, officeNumber, githubUsername, internSchool, confirmAddEmployee } = employee;
+  ])
+  .then(employeeData => {
+    let { name, employeeId, email, role, officeNumber, githubUsername, internSchool, confirmAddEmployee } = employeeData;
     let employeeObj;
     if (role === 'Manager') {
       employeeObj = new Manager (name, employeeId, email, officeNumber);
@@ -152,10 +148,16 @@ function appStart() {
     console.log(employeeArray);
 
     if (confirmAddEmployee) {
-      return appStart();
+      return addEmployee(employeeArray);
     } else {
-      return generateMarkdown(employeeArray);
+      return employeeArray;
     }
+  });
+};
+
+addEmployee()
+  .then(employeeArray => {
+    return generateMarkdown(employeeArray);
   })
   .then(readmeContent => {
     return writeToFile(readmeContent);
@@ -163,6 +165,3 @@ function appStart() {
   .catch(err => {
     console.log(err);
   });
-}
-
-appStart();
