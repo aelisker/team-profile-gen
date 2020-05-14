@@ -7,8 +7,7 @@ const questions = [
     validate: name => {
       if (name) {
         return true;
-      }
-      else {
+      } else {
         console.log ('Employees must have a name!');
         return false;
       }
@@ -22,12 +21,10 @@ const questions = [
       if (!employeeId) {
         console.log('All employees working here are assigned an ID!');
         return false;
-      }
-      else if (isNaN(employeeId)) {
+      } else if (isNaN(employeeId)) {
         console.log('Employee IDs must be a number!');
         return false;
-      }
-      else {
+      } else {
         return true;
       }
     }
@@ -43,8 +40,7 @@ const questions = [
       } else if (!email.includes('@')) {
         console.log('That doesn\'t look like a valid email address. Please try again!');
         return false;
-      }
-      else {
+      } else {
         return true;
       }
     }
@@ -53,20 +49,54 @@ const questions = [
     type: 'list',
     name: 'role',
     message: 'Please choose the employee\'s role.',
-    choices: ['MIT', 'GNU GPLv3', 'GNU APGLv3', 'GNU LGPLv3', 'Mozilla Public License 2.0', 'Apache 2.0', 'Boost Software Licence 1.0', 'Unlicensed'],
-    default: 'MIT'
+    choices: ['Manager', 'Engineer', 'Intern'],
   },
-  
+  // found solution to conditional questions on StackOverflow: https://stackoverflow.com/questions/56412516/conditional-prompt-rendering-in-inquirer
   {
     type: 'input',
-    name: 'email',
-    message: 'Enter your email address:',
-    when: ({confirmContact}) => confirmContact,
-    validate: email => {
-      if (email) return true;
-      else {
-        console.log('You must enter an email address');
+    name: 'officeNumber',
+    message: 'What is the office number this employee manages?',
+    when: (answers) => answers.role === 'Manager',
+    validate: officeNumber => {
+      if (!officeNumber) {
+        console.log('All managers manage an office!');
         return false;
+      } else if (isNaN(officeNumber)) {
+        console.log('This company organizes offices by office number. Please enter a number!');
+        return false;
+      } else {
+        return true;
+      }
+    }
+  },
+  {
+    type: 'input',
+    name: 'githubUsername',
+    message: 'What is this engineer\'s Github username?',
+    when: (answers) => answers.role === 'Engineer',
+    validate: github => {
+      if (!github) {
+        console.log('All engineers are required to have a Github account!');
+        return false;
+      } else {
+        return true;
+      }
+    }
+  },
+  {
+    type: 'input',
+    name: 'internSchool',
+    message: 'What school does / did this intern attend?',
+    when: (answers) => answers.role === 'Intern',
+    validate: school => {
+      if (!school) {
+        console.log('Interns must have an associated school!');
+        return false;
+      } else if (!isNaN(school)) {
+        console.log('What school is named a number? Try again.');
+        return false;
+      } else {
+        return true;
       }
     }
   }
