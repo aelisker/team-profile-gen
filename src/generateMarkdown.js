@@ -3,22 +3,24 @@ const createTeam = function(employeeArray) {
   for (let i = 0; i < employeeArray.length; i++) {
     let specificRoleItem;
     if (employeeArray[i].getRole() === 'Manager') {
-      specificRoleItem = `Manages Office Number: ${ employeeArray[i].getOfficeNumber()}`;
+      specificRoleItem = `Manages Office Number: ${employeeArray[i].getOfficeNumber()}`;
     } else if (employeeArray[i].getRole() === 'Engineer') {
-      specificRoleItem = `Github Username: ${ employeeArray[i].getGithub()}`;
+      specificRoleItem = `Github Username: <a href="https://github.com/${employeeArray[i].getGithub()}">${employeeArray[i].getGithub()}</a>`;
     } else {
-      specificRoleItem = `School: ${ employeeArray[i].getSchool()}`;
+      specificRoleItem = `School: ${employeeArray[i].getSchool()}`;
     }
 
     let card = 
     `<div class="col-4 mt-4">
         <div class="card h-100">
+          <div class="card-header bg-dark text-light">
+            <h2>${employeeArray[i].name}</h2>
+            <h3>${employeeArray[i].getRole()}</h3>
+          </div>
           <div class="card-body">
-            <h3>Name: ${employeeArray[i].name}</h3>
-            <h3>Employee ID: ${ employeeArray[i].id }</h3>
-            <h3>Email: ${ employeeArray[i].email }</h3>
-            <h3>Company Role: ${ employeeArray[i].getRole() }</h3>
-            <h3>${ specificRoleItem }</h3>
+            <h5>Employee ID: ${ employeeArray[i].id }</h5>
+            <h5>Email: <a href="mailto:${employeeArray[i].email}">${employeeArray[i].email}</a></h5>
+            <h5>${specificRoleItem}</h5>
           </div>
         </div>
       </div>
@@ -42,13 +44,13 @@ module.exports = employeeArray => {
     <div class="row">
       <div class="col-12">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-center">
-          <h2 class="text-center text-light">My Team</h2>
+          <h1 class="text-center text-light">My Team</h1>
         </nav>
       </div>
     </div>
     <div class="container">
       <div class="row justify-content-center">
-      ${createTeam(employeeArray)}
+        ${createTeam(employeeArray)}
       </div>
     </div>
     

@@ -7,6 +7,7 @@ const generateMarkdown = require('./src/generateMarkdown');
 
 const employeeArray = [];
 
+// this is the function we will start with
 function addManager() {
   return inquirer.prompt([
     {
@@ -187,8 +188,11 @@ function addEmployee () {
     }
   ])
   .then(employeeData => {
+    // destructure
     let { name, employeeId, email, role, githubUsername, internSchool, confirmAddEmployee } = employeeData;
     let employeeObj;
+
+    // call the correct class constructior based on role
     if (role === 'Engineer') {
       employeeObj = new Engineer (name, employeeId, email, githubUsername);
       console.log(employeeObj);
@@ -196,9 +200,11 @@ function addEmployee () {
       employeeObj = new Intern (name, employeeId, email, internSchool);
       console.log(employeeObj);
     }
-    employeeArray.push(employeeObj);
-    console.log(employeeArray);
 
+    // push new object to array
+    employeeArray.push(employeeObj);
+
+    // if we're adding another employee, loop through function again - else return employeeArray as promise
     if (confirmAddEmployee) {
       return addEmployee(employeeArray);
     } else {
@@ -207,7 +213,7 @@ function addEmployee () {
   });
 };
 
-// function to write README file
+// function to write HTML file
 const writeToFile = data => {
   fs.writeFile('./dist/team.html', data, err => {
     if (err) {
@@ -225,8 +231,8 @@ addManager()
 .then(employeeArray => {
   return generateMarkdown(employeeArray);
 })
-.then(readmeContent => {
-  return writeToFile(readmeContent);
+.then(htmlContent => {
+  return writeToFile(htmlContent);
 })
 .catch(err => {
   // using catch for rejected promise from addManager() to write to file without adding additional employees
