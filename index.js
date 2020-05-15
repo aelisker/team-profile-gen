@@ -6,6 +6,8 @@ const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 const generateMarkdown = require('./src/generateMarkdown');
 
+const employeeArray = [];
+
 // function to write README file
 const writeToFile = data => {
   fs.writeFile('./dist/index.html', data, err => {
@@ -18,11 +20,85 @@ const writeToFile = data => {
     }
   })
 }
-function addEmployee(employeeArray) {
-  if (!employeeArray) {
-    employeeArray = [];
-  }
- 
+
+function addManager() {
+  return inquirer.prompt([
+    {
+      type: 'input',
+      name: 'name',
+      message: 'What is the manager\'s name?',
+      validate: name => {
+        if (name) {
+          return true;
+        } else {
+          console.log ('Managers must have a name!');
+          return false;
+        }
+      }
+    },
+    {
+      type: 'input',
+      name: 'employeeId',
+      message: 'Please enter the manager\'s ID.',
+      validate: employeeId => {
+        if (!employeeId) {
+          console.log('All employees working here are assigned an ID!');
+          return false;
+        } else if (isNaN(employeeId)) {
+          console.log('Employee IDs must be a number!');
+          return false;
+        } else {
+          return true;
+        }
+      }
+    },
+    {
+      type: 'input',
+      name: 'email',
+      message: 'Please enter the manager\'s email address.',
+      validate: email => {
+        if (!email) {
+          console.log('Employee\'s must have an associated email address!');
+          return false;
+        } else if (!email.includes('@')) {
+          console.log('That doesn\'t look like a valid email address. Please try again!');
+          return false;
+        } else {
+          return true;
+        }
+      }
+    },
+    {
+      type: 'input',
+      name: 'officeNumber',
+      message: 'What is the office number this employee manages?',
+      validate: officeNumber => {
+        if (!officeNumber) {
+          console.log('All managers manage an office!');
+          return false;
+        } else if (isNaN(officeNumber)) {
+          console.log('This company organizes offices by office number. Please enter a number!');
+          return false;
+        } else {
+          return true;
+        }
+      }
+    },
+    {
+      type: 'confirm',
+      name: 'confirmAddEmployee',
+      message: 'Would you like to add another employee?',
+      default: false
+    }
+  ])
+  .then(manager => {
+    let { name, employeeId, email, officeNumber } = manager;
+    employeeArray.push(new Manager(name, employeeId, email, officeNumber));
+    console.log(employeeArray);
+  })
+}
+
+function addEmployee () {
   return inquirer.prompt([
     {
       type: 'input',
@@ -73,26 +149,9 @@ function addEmployee(employeeArray) {
       type: 'list',
       name: 'role',
       message: 'Please choose the employee\'s role.',
-      choices: ['Manager', 'Engineer', 'Intern'],
+      choices: ['Engineer', 'Intern'],
     },
     // found solution to conditional questions on StackOverflow: https://stackoverflow.com/questions/56412516/conditional-prompt-rendering-in-inquirer
-    {
-      type: 'input',
-      name: 'officeNumber',
-      message: 'What is the office number this employee manages?',
-      when: (answers) => answers.role === 'Manager',
-      validate: officeNumber => {
-        if (!officeNumber) {
-          console.log('All managers manage an office!');
-          return false;
-        } else if (isNaN(officeNumber)) {
-          console.log('This company organizes offices by office number. Please enter a number!');
-          return false;
-        } else {
-          return true;
-        }
-      }
-    },
     {
       type: 'input',
       name: 'githubUsername',
@@ -132,12 +191,9 @@ function addEmployee(employeeArray) {
     }
   ])
   .then(employeeData => {
-    let { name, employeeId, email, role, officeNumber, githubUsername, internSchool, confirmAddEmployee } = employeeData;
+    let { name, employeeId, email, role, githubUsername, internSchool, confirmAddEmployee } = employeeData;
     let employeeObj;
-    if (role === 'Manager') {
-      employeeObj = new Manager (name, employeeId, email, officeNumber);
-      console.log(employeeObj);
-    } else if (role === 'Engineer') {
+    if (role === 'Engineer') {
       employeeObj = new Engineer (name, employeeId, email, githubUsername);
       console.log(employeeObj);
     } else {
@@ -155,7 +211,8 @@ function addEmployee(employeeArray) {
   });
 };
 
-addEmployee()
+addManager()
+  .then(addEmployee)
   .then(employeeArray => {
     return generateMarkdown(employeeArray);
   })
@@ -165,3 +222,14 @@ addEmployee()
   .catch(err => {
     console.log(err);
   });
+
+// addEmployee()
+//   .then(employeeArray => {
+//     return generateMarkdown(employeeArray);
+//   })
+//   .then(readmeContent => {
+//     return writeToFile(readmeContent);
+//   })
+//   .catch(err => {
+//     console.log(err);
+//   });
