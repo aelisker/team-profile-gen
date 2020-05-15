@@ -3,21 +3,21 @@ const createTeam = function(employeeArray) {
   for (let i = 0; i < employeeArray.length; i++) {
     let specificRoleItem;
     if (employeeArray[i].getRole() === 'Manager') {
-      specificRoleItem = `${ employeeArray[i].getOfficeNumber()}`;
+      specificRoleItem = `Manages Office Number: ${ employeeArray[i].getOfficeNumber()}`;
     } else if (employeeArray[i].getRole() === 'Engineer') {
-      specificRoleItem = `${ employeeArray[i].getGithub()}`;
+      specificRoleItem = `Github Username: ${ employeeArray[i].getGithub()}`;
     } else {
-      specificRoleItem = `${ employeeArray[i].getSchool()}`;
+      specificRoleItem = `School: ${ employeeArray[i].getSchool()}`;
     }
 
     let card = 
     `<div class="col-4 mt-4">
-        <div class="card">
+        <div class="card h-100">
           <div class="card-body">
-            <h3>${employeeArray[i].name}</h3>
-            <h3>${ employeeArray[i].id }</h3>
-            <h3>${ employeeArray[i].email }</h3>
-            <h3>${ employeeArray[i].getRole() }</h3>
+            <h3>Name: ${employeeArray[i].name}</h3>
+            <h3>Employee ID: ${ employeeArray[i].id }</h3>
+            <h3>Email: ${ employeeArray[i].email }</h3>
+            <h3>Company Role: ${ employeeArray[i].getRole() }</h3>
             <h3>${ specificRoleItem }</h3>
           </div>
         </div>
@@ -30,7 +30,6 @@ const createTeam = function(employeeArray) {
 }
 
 module.exports = employeeArray => {
-  // const { name, employeeId, email, role, officeNumber, githubUsername, internSchool, confirmAddEmployee } = employeeArray;
     return `<!DOCTYPE html>
 <html lang="en">
   <head>
