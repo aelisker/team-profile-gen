@@ -1,25 +1,11 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
-// const questions = require('./src/questions');
 const Manager = require('./lib/Manager');
 const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 const generateMarkdown = require('./src/generateMarkdown');
 
 const employeeArray = [];
-
-// function to write README file
-const writeToFile = data => {
-  fs.writeFile('./dist/index.html', data, err => {
-    if (err) {
-      console.log(err);
-      return;
-    }
-    else {
-      console.log('Your Employee Tracker file has been successfully created. Check out index.html in the dist directory!');
-    }
-  })
-}
 
 function addManager() {
   return inquirer.prompt([
@@ -92,13 +78,23 @@ function addManager() {
     }
   ])
   .then(manager => {
-    let { name, employeeId, email, officeNumber } = manager;
+    // call Manager class constructor with promise
+    let { name, employeeId, email, officeNumber, confirmAddEmployee } = manager;
     employeeArray.push(new Manager(name, employeeId, email, officeNumber));
-    console.log(employeeArray);
+
+    // if we choose not to add another employee, reject and use catch
+    if (confirmAddEmployee === false) {
+      return Promise.reject(employeeArray);
+    }
   })
 }
 
 function addEmployee () {
+  console.log(`
+  -----------------------
+  Adding another employee
+  -----------------------
+  `)
   return inquirer.prompt([
     {
       type: 'input',
@@ -211,25 +207,29 @@ function addEmployee () {
   });
 };
 
-addManager()
-  .then(addEmployee)
-  .then(employeeArray => {
-    return generateMarkdown(employeeArray);
+// function to write README file
+const writeToFile = data => {
+  fs.writeFile('./dist/team.html', data, err => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    else {
+      console.log('Your Employee Tracker file has been successfully created. Check out team.html in the dist directory!');
+    }
   })
-  .then(readmeContent => {
-    return writeToFile(readmeContent);
-  })
-  .catch(err => {
-    console.log(err);
-  });
+}
 
-// addEmployee()
-//   .then(employeeArray => {
-//     return generateMarkdown(employeeArray);
-//   })
-//   .then(readmeContent => {
-//     return writeToFile(readmeContent);
-//   })
-//   .catch(err => {
-//     console.log(err);
-//   });
+addManager()
+.then(addEmployee)
+.then(employeeArray => {
+  return generateMarkdown(employeeArray);
+})
+.then(readmeContent => {
+  return writeToFile(readmeContent);
+})
+.catch(err => {
+  // using catch for rejected promise from addManager() to write to file without adding additional employees
+  const employeeArr = generateMarkdown(err);
+  writeToFile(employeeArr);
+});
